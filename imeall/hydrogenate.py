@@ -41,8 +41,16 @@ class Hydrify(object):
 
     def append_if_thresh(self, h_pos, rcut = 1.6):
         """
-        :method: append_if_thresh add position vector to list if
-        it is greater than a specified distance from existing vectors.
+        append_if_thresh add position vector to list if
+        it is greater than a specified distance from 
+        existing vectors.
+
+        Arguments:
+            h_pos: list of hydrogen position vectors.
+            rcut: minimum spacing of hydrogens.
+
+        Return:
+            pared_h: list pared down so minimum spacing requirement is met.
         """
         pared_h = h_pos[0]
         for h in h_pos[1:]:
@@ -57,12 +65,17 @@ class Hydrify(object):
         and a platelet of hydrogen parallel to the grain boundary. Routine
         returns positions of a suitable "plane" +/- 2A.
         Else if mode is CrackTip we populate a spherical cluster with H.
-        attributes:
+
+        Arguments:
           mode    := 'GB' or 'CrackTip' either decorate a planar cluser of material with hydrogen appropriate for a grainboundary,
                       or a spherical cluster appropriate for a crack tip.
           d_H     := Nearest neighbour threshold for hydrogen atoms. Effectively determines the platelet concentration,
           d_plane := width of planar slice of bulk to cut out for Delaunay Triangulation
           bp      := boundary plane
+
+        Returns:
+            h_list := list of np.array vectors of hydrogen positions in cluster coordinates
+
         """
         #return empty list if H spacing is not greater than 0
         if not (d_H > 0.0):
@@ -75,12 +88,13 @@ class Hydrify(object):
             cl         = gb.select(fixed_mask, orig_index=True)
             cl.write('plane.xyz')
         elif mode=='CrackTip':
-            if crackpos_fix == None:
-                fixed_mask = (np.sqrt(map(sum, map(np.square, gb.positions[:,0:3]-gb.params['CrackPos'][0:3]))) <= rr)
-            else:
-                fixed_mask = (np.sqrt(map(sum, map(np.square, gb.positions[:,0:3]-crackpos_fix[:]))) <= rr)
-            cl         = gb.select(fixed_mask, orig_index=True)
-            cl.write('cluster.xyz')
+            #if crackpos_fix == None:
+            #    fixed_mask = (np.sqrt(map(sum, map(np.square, gb.positions[:,0:3]-gb.params['CrackPos'][0:3]))) <= rr)
+            #else:
+            #    fixed_mask = (np.sqrt(map(sum, map(np.square, gb.positions[:,0:3]-crackpos_fix[:]))) <= rr)
+            #cl         = gb.select(fixed_mask, orig_index=True)
+            #cl.write('cluster.xyz')
+            cl = gb.copy()
         elif mode=='Defect':
             cl = gb.copy()
         else:
@@ -119,8 +133,9 @@ class Hydrify(object):
             oct_sites=filter(lambda x: np.sqrt(np.square(x[2]-z_plane)) <= 1.0, plane_cc)
             oct_sites = self.append_if_thresh(oct_sites)
         elif mode=='CrackTip':
-            oct_sites=filter(lambda x: np.sqrt(sum(map(np.square, x[:]-gb.params['CrackPos'][:]))) <= rr, plane_cc)
-            oct_sites=self.append_if_thresh(oct_sites)
+            #oct_sites=filter(lambda x: np.sqrt(sum(map(np.square, x[:]-gb.params['CrackPos'][:]))) <= rr, plane_cc)
+            oct_sites = filter(lambda x: True, plane_cc)
+            oct_sites = self.append_if_thresh(oct_sites)
         elif mode=='Defect':
             #keep sites within radius 1.5 A of center of cell.
             cell = cl.get_cell()
@@ -134,17 +149,18 @@ class Hydrify(object):
             tetra_lattice = alat*np.array([[0.0,0.0,0.25]])
 #Depending on orientation of the unit cell we rotate the lattice
 #so that the addition of a vector from tetra_lattice is in the new x,y,z coordinate system.
-#i.e. we move from ([0,0,1], [0,1,0] ,[0,0,1]) for 001 oriented grain boundaries this is just a rotation
+#i.e. we move from ([0,0,1], [0,1,0] ,[0,0,1]) to (bp,or,bpxor). For [001] oriented grain boundaries this is just a rotation
 #in the y-z plane. Other wise it is slightly more complicated. We rotate the x-coordinate [1,0,0]
-#to the new orientation axis (1,1,0) or (1,1,1) and then rotate y,z to the bpxv, and z =bp (i.e.
+#to the new orientation axis (1,1,0) or (1,1,1) and then rotate y,z to the bpxv, and z=bp (i.e.
 #boundary plane and  boundary plane crossed witht the orientation axis.
             tetra = []
 #the orientation axis is actually or = [0,0,1] so the z coordinate wrt to the boundary plane
-#is actually the "x coordinate". Hence we dot the boundary plane with x. however the angle is same and when
+#is actually the "x coordinate". Hence we dot the boundary plane with x. However the angle is same and when
 #in the gb cell the orientation is along x,y,z as expected. So we take the angle from dotting [1,0,0]
 #and then rotate lattice vectors in to x, y',z'.
             if mode =='GB':
                 z = np.array([0.,1., 0.])
+                #z = np.array([0.,0., 1.])
                 theta = np.arccos(bp.dot(z)/(np.linalg.norm(bp)*(np.linalg.norm(z))))
                 print 'Rotating z by: ', (180/np.pi)*theta
                 rot_quat = quat.quaternion_about_axis(-theta, np.array([1,0,0]))
@@ -160,9 +176,14 @@ class Hydrify(object):
                 #for h_pos in h_list:
                 #  cl.add_atoms(h_pos,1)
             elif mode =='CrackTip':
-                with open('crack_info.pckl','r') as f:
-                    crack_dict = pickle.load(f)
-                mat = np.array([crack_dict['crack_direction'], crack_dict['cleavage_plane'], crack_dict['crack_front']]).T
+                #with open('gb.json','r') as f:
+                #    crack_dict = pickle.load(f)
+                CrackFront = gb.params['CrackFront']/np.linalg.norm(gb.params['CrackFront'])
+                CleavagePlane = gb.params['CleavagePlane']/np.linalg.norm(gb.params['CleavagePlane'])
+                CrackDirection = gb.params['CrackDirection']/np.linalg.norm(gb.params['CrackDirection'])
+
+                mat = np.array([CrackDirection, CleavagePlane, CrackFront]).T
+                print mat
                 mat = np.matrix(mat)
                 mat = mat.I
             #rotate lattice vector to new coordinate system

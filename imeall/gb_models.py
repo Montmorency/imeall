@@ -58,8 +58,10 @@ class SubGrainBoundary(BaseModel):
     SubGrainBoundary Model.
 
     Attributes:
-      path(str): relative to the `GRAIN_BOUNDARY` database root (set in the application instance/config.py file).
-      canonical_grain(:class:GrainBoundary): Each :class:`SubGrainBoundary`  has a parent :class:`GrainBoundary` model.
+      path(str): relative to the `GRAIN_BOUNDARY` database root 
+                 (set in the application instance/config.py file).
+      canonical_grain(:class:GrainBoundary): Each :class:`SubGrainBoundary`  
+      has a parent :class:`GrainBoundary` model.
       rbt(str): rigid body translations.
       potential(str): Potential parameter file.
       rcut(float): atom deletion criterion.
