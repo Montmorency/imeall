@@ -14,10 +14,14 @@ import numpy as np
 from peewee   import *
 from datetime import datetime, timedelta
 from models   import GBAnalysis, PotentialParameters
-from quippy   import Atoms, set_fortran_indexing, Potential, AtomsReader
+
 from imeall import app
 
-set_fortran_indexing(False)
+from ase import io
+from ase import Atoms 
+
+#from quippy   import Atoms, set_fortran_indexing, Potential, AtomsReader
+
 GRAIN_DATABASE = app.config['GRAIN_DATABASE']
 database = SqliteDatabase(app.config['GRAIN_DATABASE_SQL'])
 
@@ -386,7 +390,7 @@ def gb_check_force(material='alphaFe', or_axis='001', force_tol=0.05, modify_db=
             struct_path = os.path.join(subgb_model.path, subgb_model.gbid+'_traj.xyz')
             struct_path = os.path.join(GRAIN_DATABASE, struct_path)
             try:
-                ats = AtomsReader(struct_path)[-1]
+                ats = io.read(struct_path, index='-1')
             except RuntimeError:
                 print 'No Struct File'
             except EOFError:
