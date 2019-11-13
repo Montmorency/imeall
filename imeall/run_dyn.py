@@ -17,9 +17,12 @@ from relax import relax_gb
 from slabmaker.slabmaker import build_tilt_sym_gb, build_twist_sym_gb
 from slabmaker.gengb_from_quat import QuaternionGB
 
-from quippy import Atoms, Potential
-from quippy import set_fortran_indexing, fzeros, frange
-from quippy.io import AtomsWriter, AtomsReader, write
+try:
+    from quippy import Atoms, Potential
+    from quippy import set_fortran_indexing, fzeros, frange
+    from quippy.io import AtomsWriter, AtomsReader, write
+except ImportError:
+    pass
 
 set_fortran_indexing(False)
 

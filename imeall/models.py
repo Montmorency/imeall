@@ -9,7 +9,6 @@ import re
 import shutil
 import slabmaker.slabmaker as slabmaker
 
-from  quippy import Atoms
 from  scipy.spatial import Voronoi, voronoi_plot_2d
 
 try:

@@ -6,12 +6,12 @@ import argparse
 import numpy as np
 import scipy.spatial as spatial
 
+from ase import Atoms
 from ase.geometry import get_duplicate_atoms
-from quippy import Atoms, set_fortran_indexing
+
 from imeall.slabmaker.slabmaker import rotate_vec
 from imeall.slabmaker import transformations as quat
 
-set_fortran_indexing(False)
 
 #@deprecated('to be replaced by external pylada_defects library.')
 class Hydrify(object):
