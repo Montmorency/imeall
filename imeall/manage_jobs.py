@@ -42,7 +42,7 @@ class VaspWriter(object):
             print >> f, self.incar_str
 
     def gen_vasp(self, struct_file)
-        from quippy import Atoms, set_fortran_indexing
+        from ase import Atoms
         from ase.io.vasp import write_vasp
         from ase.calculators.vasp import Vasp
         ats = Atoms(struct_file)

@@ -11,10 +11,15 @@ import logging
 from pprint import pprint
 from cStringIO import StringIO
 from ase.optimize.sciopt import SciPyFminCG
-from quippy import Atoms, Potential, frange, set_fortran_indexing
-from ase.constraints import UnitCellFilter, StrainFilter
-from quippy.io import AtomsWriter, AtomsReader, write
 from ase.optimize import BFGS, FIRE, LBFGS, MDMin, QuasiNewton
+from ase.constraints import UnitCellFilter, StrainFilter
+
+try:
+    from quippy.io import  write, AtomsWriter
+    from quippy import Atoms, Potential, frange, set_fortran_indexing
+except ImportError:
+    pass
+
 from imeall import app
 
 set_fortran_indexing(False)
@@ -80,7 +85,7 @@ def relax_gb(gb_file='file_name', traj_steps=120, total_steps=1200, force_tol = 
     pot_file    = eam_pot.split('/')[-1]
     print '{0}.xyz'.format(gb_file)
     print os.getcwd()
-    grain = AtomsReader('{0}.xyz'.format(gb_file))[-1]
+    grain = io.read('{0}.xyz'.format(gb_file), index='-1')
     if param_file != 'gp33b.xml':
         pot = Potential('IP EAM_ErcolAd do_rescale_r=T r_scale={0}'.format(r_scale), param_filename=eam_pot)
     else:

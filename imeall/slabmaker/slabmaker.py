@@ -10,10 +10,7 @@ from ase.lattice.spacegroup import crystal
 from ase.lattice.surface import surface, bcc111, bcc110
 from ase.lattice.cubic   import BodyCenteredCubic
 from ase.utils.geometry  import get_duplicate_atoms
-from quippy  import io
-from quippy  import set_fortran_indexing
 
-set_fortran_indexing(False)
 
 def rotate_plane_z(grain, miller):
     """Rotates atoms in grain so that planes parallel to the plane defined by the vector
@@ -160,7 +157,7 @@ def build_tilt_sym_gb(gbid='', bp=[3,3,2], v=[1,-1,0], min_spacing=12.0,
 # for further processing.
     if target_dir != None:
         print '\t Writing {0}.xyz to file'.format(gbid)
-        io.write('{0}.xyz'.format(os.path.join(target_dir, gbid)), grain_c)
+        write('{0}.xyz'.format(os.path.join(target_dir, gbid)), grain_c)
         return [z_planes, len(dups), n_grain_unit, grain_c]
     else:
         return grain_c
@@ -315,7 +312,7 @@ def build_twist_sym_gb(gbid='', bp=[0,0,1], v=[3,5,0], min_spacing=14.0,
     z_planes = list(sorted(set(z_planes)))
     if target_dir != None:
         print '\t Writing {0}.xyz to file'.format(gbid)
-        io.write('{0}.xyz'.format(os.path.join(target_dir, gbid)), grain_c)
+        write('{0}.xyz'.format(os.path.join(target_dir, gbid)), grain_c)
         return [z_planes, sigma_csl, n_grain_unit, grain_c]
     else:
         return grain_c

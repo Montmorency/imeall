@@ -3,7 +3,6 @@ import sys
 import logging
 from   logging.handlers import RotatingFileHandler
 
-
 try:
     from flask import Flask, render_template
     NO_FLASK = False

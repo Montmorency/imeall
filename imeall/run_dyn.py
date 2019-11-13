@@ -8,16 +8,18 @@ import os
 import sys
 import shutil
 
-from ase.constraints import UnitCellFilter
 from ase.optimize import BFGS, FIRE
+from ase.constraints import UnitCellFilter
 from cStringIO import StringIO
 from pprint import pprint
-from quippy import Atoms, Potential
-from quippy import set_fortran_indexing, fzeros, frange
-from quippy.io import AtomsWriter, AtomsReader, write
+
 from relax import relax_gb
 from slabmaker.slabmaker import build_tilt_sym_gb, build_twist_sym_gb
 from slabmaker.gengb_from_quat import QuaternionGB
+
+from quippy import Atoms, Potential
+from quippy import set_fortran_indexing, fzeros, frange
+from quippy.io import AtomsWriter, AtomsReader, write
 
 set_fortran_indexing(False)
 

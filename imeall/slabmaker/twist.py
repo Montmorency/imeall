@@ -15,11 +15,7 @@ from ase.geometry  import get_duplicate_atoms
 
 from slabmaker import gen_csl
 from fractions import gcd
-from quippy import io
-from quippy import set_fortran_indexing
-from quippy import Atoms
 
-set_fortran_indexing(False)
 
 def integralize_quaternion(n1, n2, angle):
     """Integralize quaternion.
