@@ -4,7 +4,6 @@ import json
 import glob
 import argparse
 from   peewee    import *
-from   quippy    import Atoms
 from   datetime  import datetime, timedelta
 from   models   import GBAnalysis, PotentialParameters
 from   gb_models import GrainBoundary, SubGrainBoundary

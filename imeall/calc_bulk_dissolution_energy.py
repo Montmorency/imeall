@@ -8,9 +8,12 @@ from ase.constraints import UnitCellFilter
 from ase.lattice.cubic import BodyCenteredCubic
 from ase import Atoms as aseAtoms
 
-from quippy import Atoms, Potential, AtomsReader
 from imeall import app
 
+try:
+    from quippy import Atoms, Potential, AtomsReader
+except ImportError:
+    pass
 
 def calc_bulk_dissolution(args):
     """Calculate the bulk dissolution energy for hydrogen

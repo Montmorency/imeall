@@ -3,12 +3,10 @@ import spglib
 import numpy as np
 
 from ase.geometry import geometry
-from ase import Atoms as aseAtoms
-from pylada_defect_port.pylada_defect import get_unique_ints, Voronoi
-from quippy import Atoms
-from quippy import set_fortran_indexing
+from ase import Atoms
 
-set_fortran_indexing(False)
+from pylada_defect_port.pylada_defect import get_unique_ints, Voronoi
+
 
 def remove_atoms(x, rcut=3.0, cutoff=0.2):
     """ase delete Atoms seems to cause total chaos with quippy atoms.
@@ -54,7 +52,7 @@ def decorate_interface():
     #remove voronoi duplicates
     print 'Fe_H atoms', len(ats)
     ats.wrap()
-    del_ats = aseAtoms()
+    del_ats = Atoms()
     for at in ats:
         del_ats.append(at)
     geometry.get_duplicate_atoms(del_ats, cutoff=0.2, delete=True)
